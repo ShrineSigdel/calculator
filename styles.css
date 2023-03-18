@@ -1,0 +1,70 @@
+@font-face {
+  font-family: calculatorFont;
+  src: url("./font/Calculator.ttf");
+}
+
+body {
+  display: flex;
+  background-color: #6c6f6c;
+  justify-content: center;
+  padding: 1em;
+}
+.container {
+  display: flex;
+  flex-direction: column;
+  border: 2.5px solid #10105840;
+  padding: 1em;
+  background: #25a12b3b;
+  border: 3px solid wheat;
+  border-radius: 30px;
+}
+.title {
+  font-family: "calculatorFont";
+  color: #cfffcc;
+  text-align: right;
+  margin: 0 1.5em 0.5em 0;
+  font-size: larger;
+  font-weight: bolder;
+}
+.screen {
+  width: 15em;
+  height: 7em;
+  margin-bottom: 1em;
+  background: #83ebfed4;
+  border-radius: 22px;
+  border: 3px solid #a5572a91;
+}
+
+.clear-button-container {
+  display: flex;
+  margin-bottom: 10px;
+}
+#ac-btn {
+  flex: 1;
+  height: 2em;
+  background: #daacac;
+  margin-right: 10px;
+  border-radius: 10px;
+}
+#clear-btn {
+  flex: 1;
+  background: #98f9e64d;
+  border-radius: 10px;
+}
+.buttons-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-rows: repeat(4, 70px);
+  grid-template-columns: repeat(4, 1fr);
+}
+.btn {
+  border-radius: 7px;
+  font-size: 30px;
+  font-weight: bold;
+  color: #050b09e0;
+  border: none;
+  background: #f1e4bd;
+}
+.btn:hover {
+  border: 7px solid #ec5f1880;
+}
