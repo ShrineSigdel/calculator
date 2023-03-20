@@ -28,11 +28,26 @@ body {
 }
 .screen {
   width: 15em;
-  height: 7em;
+  height: 5em;
   margin-bottom: 1em;
-  background: #83ebfed4;
+  background: #1a525cd4;
   border-radius: 22px;
-  border: 3px solid #a5572a91;
+  display: flex;
+  border: 3px solid #d8d7d691;
+  flex-direction: column;
+  padding: 1em;
+  font-family: "calculatorFont";
+}
+.userInput {
+  font-size: x-large;
+  height: 35px;
+  color: #c6eeef;
+}
+.userOutput {
+  align-self: flex-end;
+  font-size: xx-large;
+  font-weight: bold;
+  color: #6bd068;
 }
 
 .clear-button-container {
@@ -66,5 +81,5 @@ body {
   background: #f1e4bd;
 }
 .btn:hover {
-  border: 7px solid #ec5f1880;
+  border: 7px solid #000000;
 }
