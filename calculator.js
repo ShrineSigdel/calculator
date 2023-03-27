@@ -1,92 +1,121 @@
-const buttons = document.querySelectorAll('.btn');
+let firstOperand = '', secondOperand = '', opr = '';
+let gotOperator = false; // to make the calculations occur in pair.
+
+
 const userInput = document.querySelector('.userInput');
 const userOutput = document.querySelector('.userOutput');
-
-//setting default values to variables and operators.
-let varCount = 0;
-let firstInput = '';
-let secondInput = '';
-let operator = '';
-//for calculation
-let operandOne, operandTwo, operatorCollector, calculate;
-
-function reset() {
-    varCount = 0;
-    firstInput = '';
-    secondInput = '';
-    operator = '';
-}
-
-buttons.forEach((item) => item.addEventListener('click', (item) => {
-    const temp = item.currentTarget.textContent; //takes the string inside tags.
-    userDisplay(temp);
-}));
-
-function userDisplay(temp) {
-
-    varSeparation(temp);  //differentiates no. operator and other buttons
-    if (temp == '=') return;
-    else if (temp == 'AC') {
-        userInput.textContent = '';
-        userOutput.textContent = '';
-        reset();
-        return;
-    }
-    userInput.textContent += temp; //updates the display.
-}
-function varSeparation(item) {
+const numbers = document.querySelectorAll('[data-number]');
+const operators = document.querySelectorAll('[operator]');
+const equalBtn = document.getElementById('equal-btn');
+const decimal = document.getElementById('decimal');
+const acBtn = document.getElementById('ac-btn');
+const clearBtn = document.getElementById('clear-btn');
 
 
-    if (item == '+' || item == '-' || item == '*' || item == '/') {
+window.addEventListener('keydown',handleKeyboard);
+numbers.forEach(number => number.addEventListener('click', () => appendNumber(number.textContent)));
+operators.forEach(operator => operator.addEventListener('click', () => checkOperation(operator.textContent)));
+equalBtn.addEventListener('click', equalBtnOperation);
 
-        if (operator == '') {
-            operator = item;
-        }
-        else {
-            operatorCollector = item;
-        }
-        varCount++;
-    }
-    else if (varCount == 0) {
-        firstInput += item;
-    }
-    else if (varCount == 1) {
-        secondInput += item;
-    }
-    // when requirements calculation are met
-    if (varCount == 2 || (varCount == 1 && item == '=' && secondInput != '')) {
-        calculate = operate(firstInput, secondInput, operator);
-        userInput.textContent = calculate;
-        updateDisplay(calculate);
-        varCount = 1;
-        firstInput = calculate.toString();
-        secondInput = '';
-        operator = operatorCollector;
-    }
-
-
+function equalBtnOperation () {
+    userOutput.textContent = evaluate(firstOperand, secondOperand, opr);
+    opr = '';
+    restoreValues();
     return;
 }
 
-function operate(firstInput, secondInput, operator) {
 
-    operandOne = parseInt(firstInput);
-    operandTwo = parseInt(secondInput);
-    console.log(operator);
+acBtn.addEventListener('click', () => {
 
-    switch (operator) {
-        case '+':
-            return operandOne + operandTwo;
-        case '-':
-            return operandOne - operandTwo;
-        case '*':
-            return operandOne * operandTwo;
-        case '/':
-            return operandOne / operandTwo;
+    firstOperand = '', secondOperand = '', opr = '';
+    gotOperator = false;
+    userInput.textContent = '';
+    userOutput.textContent = '00';
+});
+
+// clearBtn.addEventListener('click', () => {
+//     userInput.textContent = userInput.textContent.slice(0,-1);
+    
+//     if(gotOperator === true) {
+//         secondOperand = secondOperand.slice(0,-1);
+//     }
+//     else{
+//         firstOperand = userInput.textContent;
+//     }
+// });
+
+function appendNumber(number) {
+    userInput.textContent += number;
+    if (gotOperator === true) {
+        secondOperand += number;
+    }
+    return;
+}
+
+function checkOperation(operator) {
+    
+    if (opr === '') {
+        opr = operator;
+        firstOperand = userInput.textContent;
+        gotOperator = true;
+        userInput.textContent += opr;
+        return;
+    }
+    else {
+        userOutput.textContent = evaluate(firstOperand, secondOperand, opr);
+        opr = operator;
+        restoreValues();
+        return;
     }
 }
 
-function updateDisplay(output) {
-
-    userOutput.textContent = output;
+function evaluate(firstOperand, secondOperand, opr) {
+    const a = parseFloat(firstOperand);
+    const b = parseFloat(secondOperand);
+    switch (opr) {
+        case '+':
+            return Math.round((a + b) * 100) / 100;
+        case '-':
+            return Math.round((a - b) * 100) / 100;
+        case '*':
+            return Math.round((a * b) * 100) / 100;
+        case '/':
+            return Math.round((a / b) * 100) / 100;
+    }
 }
+
+function restoreValues() {
+    firstOperand = userOutput.textContent;
+    secondOperand = '';
+    userInput.textContent = userOutput.textContent + opr;
+}
+
+function handleKeyboard(btn) {
+    if(btn.key >=0 && btn.key<=9) appendNumber(btn.key);
+    if(btn.key == '+' ||btn.key == '-' || btn.key == '*' || btn.key == '/') checkOperation(btn.key);
+    if(btn.key =='Enter') equalBtnOperation();
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
