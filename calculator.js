@@ -1,9 +1,9 @@
-let firstOperand = '', secondOperand = '', opr = '';
-let gotOperator = false; // to make the calculations occur in pair.
+let firstOperand = '', secondOperand = '', currentOperator = null;
+let shouldResetScreen = false;
 
 
-const userInput = document.querySelector('.userInput');
-const userOutput = document.querySelector('.userOutput');
+const lastWorkingScreen = document.querySelector('.userInput');
+const currentWorkingScreen = document.querySelector('.userOutput');
 const numbers = document.querySelectorAll('[data-number]');
 const operators = document.querySelectorAll('[operator]');
 const equalBtn = document.getElementById('equal-btn');
@@ -12,90 +12,98 @@ const acBtn = document.getElementById('ac-btn');
 const clearBtn = document.getElementById('clear-btn');
 
 
-window.addEventListener('keydown',handleKeyboard);
+window.addEventListener('keydown', handleKeyboard);
 numbers.forEach(number => number.addEventListener('click', () => appendNumber(number.textContent)));
 operators.forEach(operator => operator.addEventListener('click', () => checkOperation(operator.textContent)));
-equalBtn.addEventListener('click', equalBtnOperation);
+equalBtn.addEventListener('click', evaluate);
+clearBtn.addEventListener('click', clearBtnOperation);
+acBtn.addEventListener('click', acBtnOperation);
+decimal.addEventListener('click',handleDecimal);
 
-function equalBtnOperation () {
-    userOutput.textContent = evaluate(firstOperand, secondOperand, opr);
-    opr = '';
-    restoreValues();
-    return;
+
+function clearBtnOperation() {
+    currentWorkingScreen.textContent = currentWorkingScreen.textContent.slice(0, -1);
 }
 
-
-acBtn.addEventListener('click', () => {
-
-    firstOperand = '', secondOperand = '', opr = '';
-    gotOperator = false;
-    userInput.textContent = '';
-    userOutput.textContent = '00';
-});
-
-// clearBtn.addEventListener('click', () => {
-//     userInput.textContent = userInput.textContent.slice(0,-1);
-    
-//     if(gotOperator === true) {
-//         secondOperand = secondOperand.slice(0,-1);
-//     }
-//     else{
-//         firstOperand = userInput.textContent;
-//     }
-// });
+function acBtnOperation() {
+    firstOperand = '', secondOperand = '', currentOperator = null;
+    shouldResetScreen = false;
+    currentWorkingScreen.textContent = '';
+    lastWorkingScreen.textContent = '0';
+}
 
 function appendNumber(number) {
-    userInput.textContent += number;
-    if (gotOperator === true) {
-        secondOperand += number;
+    if (shouldResetScreen == true) {
+        resetScreen();
     }
-    return;
+    currentWorkingScreen.textContent += number;
 }
 
 function checkOperation(operator) {
-    
-    if (opr === '') {
-        opr = operator;
-        firstOperand = userInput.textContent;
-        gotOperator = true;
-        userInput.textContent += opr;
-        return;
+    if (currentOperator == null) {
+        shouldResetScreen = true;
+        firstOperand = currentWorkingScreen.textContent;
+        currentOperator = operator;
+        currentWorkingScreen.textContent = `${firstOperand}${currentOperator}`;
     }
     else {
-        userOutput.textContent = evaluate(firstOperand, secondOperand, opr);
-        opr = operator;
-        restoreValues();
-        return;
+        secondOperand = currentWorkingScreen.textContent;
+        evaluate();
     }
 }
 
-function evaluate(firstOperand, secondOperand, opr) {
+function evaluate() {
+    if (currentOperator == null) return;
+    let calc;
+    secondOperand = currentWorkingScreen.textContent;
     const a = parseFloat(firstOperand);
     const b = parseFloat(secondOperand);
-    switch (opr) {
+    switch (currentOperator) {
         case '+':
-            return Math.round((a + b) * 100) / 100;
+            calc = Math.round((a + b) * 100) / 100;
+            break;
         case '-':
-            return Math.round((a - b) * 100) / 100;
+            calc = Math.round((a - b) * 100) / 100;
+            break;
         case '*':
-            return Math.round((a * b) * 100) / 100;
+            calc = Math.round((a * b) * 100) / 100;
+            break;
         case '/':
-            return Math.round((a / b) * 100) / 100;
+            if( secondOperand == 0) {
+                currentWorkingScreen.textContent = 'Error, Press AC to continue';
+                return;
+            }
+            calc = Math.round((a / b) * 100) / 100;
+            break;
     }
+    lastWorkingScreen.textContent = `${firstOperand}${currentOperator}${secondOperand}  = ${calc}`;
+    currentWorkingScreen.textContent = calc;
+    shouldResetScreen = true;
+    currentOperator = null;
 }
 
-function restoreValues() {
-    firstOperand = userOutput.textContent;
-    secondOperand = '';
-    userInput.textContent = userOutput.textContent + opr;
+function resetScreen() {
+    if (lastWorkingScreen.textContent !== '' || lastWorkingScreen.textContent !== '0') lastWorkingScreen.textContent = currentWorkingScreen.textContent;
+    currentWorkingScreen.textContent = '';
+    shouldResetScreen = false;
 }
 
 function handleKeyboard(btn) {
-    if(btn.key >=0 && btn.key<=9) appendNumber(btn.key);
-    if(btn.key == '+' ||btn.key == '-' || btn.key == '*' || btn.key == '/') checkOperation(btn.key);
-    if(btn.key =='Enter') equalBtnOperation();
-
+    if (btn.key >= 0 && btn.key <= 9) appendNumber(btn.key);
+    if (btn.key == '+' || btn.key == '-' || btn.key == '*' || btn.key == '/') checkOperation(btn.key);
+    if (btn.key == 'Enter') evaluate();
+    if (btn.key == 'Backspace') clearBtnOperation();
+    if (btn.key == 'Esc') acBtnOperation();
 }
+
+function handleDecimal() {
+    if(! currentWorkingScreen.textContent.includes('.') ){
+        currentWorkingScreen.textContent += '.';
+    }
+}
+
+
+
 
 
 
