@@ -93,7 +93,8 @@ function handleKeyboard(btn) {
     if (btn.key == '+' || btn.key == '-' || btn.key == '*' || btn.key == '/') checkOperation(btn.key);
     if (btn.key == 'Enter') evaluate();
     if (btn.key == 'Backspace') clearBtnOperation();
-    if (btn.key == 'Esc') acBtnOperation();
+    if (btn.key == 'Escape') acBtnOperation();
+    if (btn.key == '.') handleDecimal();
 }
 
 function handleDecimal() {
